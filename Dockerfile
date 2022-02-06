@@ -14,7 +14,8 @@ RUN mkdir -p /home/jovyan/Databases/AlphaFold/Ecoli \
     && cd /home/jovyan \
  	&& git clone https://github.com/bioexcel/biobb_wf_virtual-screening.git \
     && cd biobb_wf_virtual-screening \
-    && conda env create -f conda_env/environment.yml
+    && conda env create -f conda_env/environment.yml \
+    && conda create -n vina python=3
 
 RUN /bin/bash -c ". activate biobb_VS_tutorial && \
     jupyter-nbextension enable --py --user widgetsnbextension && \
@@ -22,10 +23,19 @@ RUN /bin/bash -c ". activate biobb_VS_tutorial && \
     conda install -c anaconda ipykernel && \
     python -m ipykernel install --user --name=biobb_VS_tutorial"
 
+RUN /bin/bash -c ". activate vina && \
+conda config --env --add channels conda-forge && \
+conda install numpy && \
+conda install pip && \
+pip install vina"
+
 #Rscript to install dependencies
 
 COPY Databases/Drugs /home/jovyan/Databases/Drugs
 COPY Databases/Proteomes /home/jovyan/Databases/Proteomes
+COPY Code /home/jovyan/Code
 USER root
-RUN chmod -R +rw /home/jovyan/Databases/* 
+RUN chmod -R +rw /home/jovyan/Databases/*
+RUN chmod -R +x /home/jovyan/Code/* 
 USER jovyan
+CMD ['/home/jovyan/Code/start.sh']
