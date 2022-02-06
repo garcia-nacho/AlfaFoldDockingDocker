@@ -12,22 +12,16 @@ RUN mkdir -p /home/jovyan/Databases/AlphaFold/Ecoli \
     && tar -xvf ./Hinf.tar \
     && rm Hinf.tar \
     && cd /home/jovyan \
+    && wget https://github.com/ccsb-scripps/AutoDock-Vina/releases/download/v1.2.3/vina_1.2.3_linux_x86_64 \
  	&& git clone https://github.com/bioexcel/biobb_wf_virtual-screening.git \
     && cd biobb_wf_virtual-screening \
-    && conda env create -f conda_env/environment.yml \
-    && conda create -n vina python=3
-
+    && conda env create -f conda_env/environment.yml 
+    
 RUN /bin/bash -c ". activate biobb_VS_tutorial && \
     jupyter-nbextension enable --py --user widgetsnbextension && \
     jupyter-nbextension enable --py --user nglview && \
     conda install -c anaconda ipykernel && \
     python -m ipykernel install --user --name=biobb_VS_tutorial"
-
-RUN /bin/bash -c ". activate vina && \
-conda config --env --add channels conda-forge && \
-conda install numpy && \
-conda install pip && \
-pip install vina"
 
 #Rscript to install dependencies
 
@@ -35,7 +29,8 @@ COPY Databases/Drugs /home/jovyan/Databases/Drugs
 COPY Databases/Proteomes /home/jovyan/Databases/Proteomes
 COPY Code /home/jovyan/Code
 USER root
+RUN chmod +x /home/jovyan/vina_1.2.3_linux_x86_64 && mv /home/jovyan/vina_1.2.3_linux_x86_64 /usr/bin/vina_1.2.3
 RUN chmod -R +rw /home/jovyan/Databases/*
 RUN chmod -R +x /home/jovyan/Code/* 
 USER jovyan
-CMD ['/home/jovyan/Code/start.sh']
+CMD ["/home/jovyan/Code/start.sh"]
