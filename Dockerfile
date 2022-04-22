@@ -21,6 +21,7 @@ RUN /bin/bash -c ". activate biobb_VS_tutorial && \
     jupyter-nbextension enable --py --user widgetsnbextension && \
     jupyter-nbextension enable --py --user nglview && \
     conda install -c anaconda ipykernel && \
+    pip install pyKVFinder && \
     python -m ipykernel install --user --name=biobb_VS_tutorial"
 
 #Rscript to install dependencies
